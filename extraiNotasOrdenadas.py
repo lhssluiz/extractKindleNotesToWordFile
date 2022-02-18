@@ -10,7 +10,7 @@ from docx.shared import Inches
 
 file_path = 'C:/Users/luiz.sa/Desktop/ExtrairNotasKindle/My Clippings.txt'
 arrayLines, arrayNotes = [], []
-dictPositionNotes, tempDict = {}, {}
+dictPositionNotes, lastDict = {}, {}
 
 titleToSearch = input('Insira o nome do título do livro igual está no Kindle: ')
 linePosition=0
@@ -63,7 +63,25 @@ def ifIsNote(lineInformations, lineContent):
     newLineContent = concat("== Nota Pessoal abaixo, do próximo destaque: ", lineContent)
     return newLineContent
   else:
-    return lineContent                      
+    return lineContent
+
+def markRepeatedNotes(dicionario):
+  for chaves, valores in dicionario.items():
+      for keys, values in dicionario.items():
+          if chaves != keys and valores == values:
+              if chaves < keys:
+                  dicionario[chaves] = "apagar"
+              else:
+                  dicionario[keys] = "apagar"
+  return dicionario
+
+def cleanDictionary(dicionario):
+  lastDict = {}
+  for chaves, valores in dicionario.items():
+      if valores != "apagar":
+          lastDict[chaves] = valores
+  return lastDict
+
 
 with open(file_path, encoding='utf8') as clippingsFileObject:
   arrayLines = clippingsFileObject.readlines()
@@ -78,18 +96,17 @@ while linePosition < len(arrayLines):
 document = Document()
 document.add_heading(titleToSearch)
 
-dictFinal = dict(sorted(dictPositionNotes.items(), key=operator.itemgetter(1)))
-
-#for keys in dictFinal.keys:
-#    if dictFinal.get(keys+1).contains(dictFinal.keys(keys)):
-#        dictFinal.pop(keys)
+otherDict = {}
+otherDict = dict(sorted(dictPositionNotes.items(), key=operator.itemgetter(1)))
+lastDict = markRepeatedNotes(otherDict)
+dictFinal = cleanDictionary(lastDict)
 
 for notes in dictFinal.keys():
     if "== Nota Pessoal: " in notes:
-        paragraph = document.add_paragraph()
-        paragraph.add_run(notes).bold = True
+      paragraph = document.add_paragraph()
+      paragraph.add_run(notes).bold = True
     else:
-        document.add_paragraph(notes)
+      document.add_paragraph(notes)
 
 alphanumeric_filter = filter(str.isalnum, titleToSearch)
 cleanTitle = "".join(alphanumeric_filter)
@@ -98,6 +115,8 @@ print("Separação entre os dicionários\n \n")
 print(dictFinal)
 
 document.save('C:/Users/luiz.sa/Desktop/ExtrairNotasKindle/'+cleanTitle+'.docx')
+
+print("O programa foi um sucesso!")
 
 #REFERENCES
 #Find and index: https://stackoverflow.com/questions/2294493/how-to-get-the-position-of-a-character-in-python
