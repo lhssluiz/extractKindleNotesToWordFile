@@ -107,6 +107,8 @@ print(dictFinal)
 
 document.save('C:/Users/luiz.sa/Desktop/ExtrairNotasKindle/'+cleanTitle+'.docx')
 
+print("Success! Everything worked")
+
 #REFERENCES
 #Find and index: https://stackoverflow.com/questions/2294493/how-to-get-the-position-of-a-character-in-python
 #Check if String is a digit: https://www.pythonpool.com/python-check-if-string-is-integer/#:~:text=We%20can%20use%20the%20isdigit,Otherwise%2C%20it%20returns%20False.
